@@ -1,53 +1,43 @@
-const blogUrl = "https://p02003.github.io/blog-data/data.json";
+const blogList = document.getElementById('blogList');
+const blogForm = document.getElementById('blogForm');
 
-fetch(blogUrl)
-  .then(response => response.json())
+// ✅ Your JSON file URL
+const blogDataURL = 'https://p02003.github.io/blog-data/blogdata.json';
+
+// Fetch & display blog posts
+fetch(blogDataURL)
+  .then(res => res.json())
   .then(data => {
-    const posts = data.devBlogEntries;
-    displayPosts(posts);
-  })
-  .catch(err => console.error("Fetch Error:", err));
-
-function displayPosts(posts) {
-  const container = document.getElementById("blogPosts");
-  container.innerHTML = "";
-  posts.forEach(post => {
-    container.innerHTML += `
-      <div class="mb-4 border-bottom">
+    data.forEach(post => {
+      const div = document.createElement('div');
+      div.className = "border p-3 mb-3 rounded";
+      div.innerHTML = `
         <h3>${post.title}</h3>
-        <p><strong>Date:</strong> ${post.publishDate}</p>
+        <small>${post.date}</small>
         <p>${post.content}</p>
-        <p><strong>Tags:</strong> ${post.tags.join(", ")}</p>
-      </div>
-    `;
+        <p><strong>Tags:</strong> ${post.tags.join(', ')}</p>
+      `;
+      blogList.appendChild(div);
+    });
   });
-}
 
-function addPost() {
-  const title = document.getElementById("title").value;
-  const date = document.getElementById("date").value;
-  const content = document.getElementById("content").value;
-  const tags = document.getElementById("tags").value.split(",");
+// Form submit (temporary add)
+blogForm.addEventListener('submit', function (e) {
+  e.preventDefault();
 
-  const newPost = {
-    title,
-    publishDate: date,
-    content,
-    tags
-  };
+  const title = document.getElementById('title').value;
+  const date = document.getElementById('date').value;
+  const content = document.getElementById('content').value;
+  const tags = document.getElementById('tags').value.split(',');
 
-  const container = document.getElementById("blogPosts");
-  container.innerHTML += `
-    <div class="mb-4 border-bottom">
-      <h3>${newPost.title}</h3>
-      <p><strong>Date:</strong> ${newPost.publishDate}</p>
-      <p>${newPost.content}</p>
-      <p><strong>Tags:</strong> ${newPost.tags.join(", ")}</p>
-    </div>
+  const div = document.createElement('div');
+  div.className = "border p-3 mb-3 rounded bg-light";
+  div.innerHTML = `
+    <h3>${title}</h3>
+    <small>${date}</small>
+    <p>${content}</p>
+    <p><strong>Tags:</strong> ${tags.join(', ')}</p>
   `;
-
-  document.getElementById("title").value = "";
-  document.getElementById("date").value = "";
-  document.getElementById("content").value = "";
-  document.getElementById("tags").value = "";
-}
+  blogList.appendChild(div);
+  blogForm.reset();
+});
